@@ -74,7 +74,7 @@ public String generatePassword(String timestamp){
     return Base64.getEncoder().encodeToString(rawPassword.getBytes());
 }
 
-public Map<String,Object> intiateStkPush(IncomingOrder order,String phoneNumber){
+public Map<String,Object> intiateStkPush(IncomingOrder order){
     String accessToken = getAccessToken();
     String timestamp = generateTimestamp();
     String password = generatePassword(timestamp);
@@ -85,9 +85,9 @@ public Map<String,Object> intiateStkPush(IncomingOrder order,String phoneNumber)
     requestBody.put("Timestamp",timestamp);
     requestBody.put("TransactionType","CustomerPayBillOnline");
     requestBody.put("Amount", order.getTotal().intValue());
-    requestBody.put("PartyA",phoneNumber);
+    requestBody.put("PartyA",order.getPhoneNumber());
     requestBody.put("PartyB",shortCode);
-    requestBody.put("PhoneNumber",phoneNumber);
+    requestBody.put("PhoneNumber",order.getPhoneNumber());
     requestBody.put("CallBackURL",callbackUrl);
     requestBody.put("AccountReference","Order"+ order.getOrder_id());
     requestBody.put("TransactionDesc","Payment for order "+ order.getOrder_id());

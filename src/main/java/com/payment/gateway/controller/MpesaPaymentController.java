@@ -2,16 +2,13 @@ package com.payment.gateway.controller;
 
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.payment.gateway.model.*;
@@ -33,10 +30,9 @@ public class MpesaPaymentController {
         return darajaService.getAccessToken();
     } 
 
-    @PostMapping("/stkpush/{orderId}")
-    public Map<String,Object> triggerStkPush(@PathVariable Integer orderId,@RequestParam String phoneNumber){
-        IncomingOrder order = orderRepo.findById(orderId).orElseThrow();
-        return darajaService.intiateStkPush(order, phoneNumber);
+    @PostMapping("/stkpush")
+    public Map<String,Object> triggerStkPush(@RequestBody IncomingOrder order){
+        return darajaService.intiateStkPush(order);
 
     }
 
