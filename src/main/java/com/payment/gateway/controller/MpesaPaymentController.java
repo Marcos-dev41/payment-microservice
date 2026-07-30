@@ -19,7 +19,7 @@ import com.payment.gateway.repository.IncomingOrderRepo;
 import com.payment.gateway.service.*;
 
 @RestController
-@RequestMapping("/payments/webhook")
+@RequestMapping("/payments/webhook/mpesa")
 public class MpesaPaymentController {
 
     @Autowired
