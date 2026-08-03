@@ -26,7 +26,7 @@ public void sendPaymentConfirmation(String toEmail ,IncomingOrder order){
     SimpleMailMessage message = new SimpleMailMessage();
     message.setFrom(senderEmail);
     message.setTo(toEmail);
-    message.setSubject("Payment Confrimation -Order #" + order.getOrder_id());
+    message.setSubject("Payment Confrimation -Order #" + order.getPrimeOrderId());
     message.setText("Your payment of ksh " + order.getTotal() + " has been recieved succesfully. Thankyou!");
     mailSender.send(message);
 }
@@ -36,7 +36,7 @@ public void sendPaymentFailure(String toEmail ,IncomingOrder order){
     SimpleMailMessage message = new SimpleMailMessage();
     message.setFrom(senderEmail);
     message.setTo(toEmail);
-    message.setSubject("Payment Failed -Order #" + order.getOrder_id());
+    message.setSubject("Payment Failed -Order #" + order.getPrimeOrderId());
     message.setText("Your payment of ksh " + order.getTotal() + " has been FAILED. please try again");
     mailSender.send(message);
 }

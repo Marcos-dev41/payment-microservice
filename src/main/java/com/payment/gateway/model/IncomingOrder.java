@@ -21,7 +21,7 @@ public class IncomingOrder{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer order_no;
 
-    private String order_id;
+    private String primeOrderId;
     private BigDecimal total;
     private String phoneNumber;
     private String currency;
