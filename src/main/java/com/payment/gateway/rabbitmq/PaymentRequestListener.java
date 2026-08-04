@@ -28,10 +28,10 @@ public class PaymentRequestListener {
         order.setPhoneNumber(dto.getPhoneNumber());
         order.setCurrency(dto.getCurrency());
         order.setProvider(dto.getProvider());
+        order.setEmail(dto.getEmail());
         order.setCorrelationId(dto.getCorrelationId());
-        order.setIndempotecykey(dto.getCorrelationId()); // reusing, as discussed
+        order.setIndempotecykey(dto.getCorrelationId()); 
 
-        // Save first so we have a persisted row to update once Safaricom responds
         order = orderRepo.save(order);
 
         Map<String, Object> result = darajaService.intiateStkPush(order);
