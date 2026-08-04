@@ -89,8 +89,8 @@ public Map<String,Object> intiateStkPush(IncomingOrder order){
     requestBody.put("PartyB",shortCode);
     requestBody.put("PhoneNumber",order.getPhoneNumber());
     requestBody.put("CallBackURL",callbackUrl);
-    requestBody.put("AccountReference","Order"+ order.getPrimeOrderId());
-    requestBody.put("TransactionDesc","Payment for order "+ order.getPrimeOrderId());
+    requestBody.put("AccountReference","Order"+ order.getOrderId());
+    requestBody.put("TransactionDesc","Payment for order "+ order.getOrderId());
 
 
     HttpHeaders headers = new HttpHeaders();
