@@ -21,13 +21,13 @@ public class IncomingOrder{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer order_no;
 
-    private String primeOrderId;
+    private Integer orderId;
     private BigDecimal total;
     private String phoneNumber;
     private String currency;
     private String provider;
     private String email;
-    private String indempotency_key;
     private String correlationId;
     private String checkoutRequestId;
+    private String indempotecykey;
 }
