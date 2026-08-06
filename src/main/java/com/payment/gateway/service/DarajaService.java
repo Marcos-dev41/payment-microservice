@@ -106,7 +106,9 @@ public Map<String,Object> intiateStkPush(IncomingOrder order){
 
     String checkoutRequestId =(String) responseBody.get("CheckoutRequestID");
     System.out.println(checkoutRequestId);
+    order.setStatus("Initialized");
     orderRepo.save(order);
      return responseBody;
+
 }
 }
