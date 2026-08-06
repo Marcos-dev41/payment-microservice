@@ -30,4 +30,5 @@ public class IncomingOrder{
     private String correlationId;
     private String checkoutRequestId;
     private String indempotecykey;
+    private String status;
 }
