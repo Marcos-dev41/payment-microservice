@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.payment.gateway.model.*;
 import com.payment.gateway.repository.IncomingOrderRepo;
 import com.payment.gateway.service.*;
+import com.payment.gateway.service.EmailService;
 
 @RestController
 @RequestMapping("/payments/webhook/mpesa")
@@ -24,6 +25,9 @@ public class MpesaPaymentController {
 
     @Autowired
     private IncomingOrderRepo orderRepo;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/test-token")
     public String testToken() {
@@ -47,7 +51,7 @@ public Map<String, Object> handleCallback(@RequestBody Map<String, Object> callb
     int resultCode = (int) stkCallback.get("ResultCode");
 
     IncomingOrder order = orderRepo.findByCheckoutRequestId(checkoutRequestId).orElse(null);
-
+    String email = order.getEmail();
 
     if(order == null){
         System.out.println("no matching order for checkoutRequestId: " +  checkoutRequestId);
@@ -69,6 +73,8 @@ public Map<String, Object> handleCallback(@RequestBody Map<String, Object> callb
                 phoneNumber = ((Number) item.get("Value")).longValue();
             }
     }
+
+    emailService.sendPaymentConfirmation(email, order);     
     }
 
     return Map.of("ResultCode", 0, "ResultDesc", "Accepted");
