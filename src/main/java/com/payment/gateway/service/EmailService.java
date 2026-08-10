@@ -20,7 +20,7 @@ public class EmailService{
 private JavaMailSender mailSender;
 
 
-
+@Async
 public void sendPaymentConfirmation(String toEmail ,IncomingOrder order){
  
     SimpleMailMessage message = new SimpleMailMessage();
@@ -30,7 +30,7 @@ public void sendPaymentConfirmation(String toEmail ,IncomingOrder order){
     message.setText("Your payment of ksh " + order.getTotal() + " has been recieved succesfully. Thankyou!");
     mailSender.send(message);
 }
-
+@Async
 public void sendPaymentFailure(String toEmail ,IncomingOrder order){
  
     SimpleMailMessage message = new SimpleMailMessage();
@@ -40,25 +40,4 @@ public void sendPaymentFailure(String toEmail ,IncomingOrder order){
     message.setText("Your payment of ksh " + order.getTotal() + " has been FAILED. please try again");
     mailSender.send(message);
 }
-@Async
-public void sendResetPasswordMail(String toEmail,String resetLink){
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setFrom(senderEmail);
-    message.setTo(toEmail);
-    message.setSubject("MoniMart Password Reset");
-    message.setText("Click the link below to reset your account password" + "\n Password Reset Link:"+ resetLink);
-    mailSender.send(message);
-}
-
-@Async
-public void sendRegistrationMail(String toEmail){
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setFrom(senderEmail);
-    message.setTo(toEmail);
-    message.setSubject("Welcome" + toEmail);
-    message.setText("Welcome to Monimart leading monitor sales e-commerce site");
-    mailSender.send(message);
-}
-
-
 }
