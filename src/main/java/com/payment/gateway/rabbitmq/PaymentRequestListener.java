@@ -30,7 +30,6 @@ public class PaymentRequestListener {
         order.setProvider(dto.getProvider());
         order.setEmail(dto.getEmail());
         order.setCorrelationId(dto.getCorrelationId());
-        order.setIndempotecykey(dto.getCorrelationId()); 
 
         order = orderRepo.save(order);
 
