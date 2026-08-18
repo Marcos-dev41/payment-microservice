@@ -69,6 +69,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v5
         with:
-          context: ./payment-microservice
+          context: .
           push: true
           tags: ghcr.io/marcos-dev41/monimart-payment:latest
