@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,39 +76,58 @@ public String generatePassword(String timestamp){
 }
 
 public Map<String,Object> intiateStkPush(IncomingOrder order){
-    String accessToken = getAccessToken();
-    String timestamp = generateTimestamp();
-    String password = generatePassword(timestamp);
 
-    Map<String,Object> requestBody = new HashMap<>();
-    requestBody.put("BusinessShortCode", shortCode);
-    requestBody.put("Password",password);
-    requestBody.put("Timestamp",timestamp);
-    requestBody.put("TransactionType","CustomerPayBillOnline");
-    requestBody.put("Amount", order.getTotal().intValue());
-    requestBody.put("PartyA",order.getPhoneNumber());
-    requestBody.put("PartyB",shortCode);
-    requestBody.put("PhoneNumber",order.getPhoneNumber());
-    requestBody.put("CallBackURL",callbackUrl);
-    requestBody.put("AccountReference","Order"+ order.getOrderId());
-    requestBody.put("TransactionDesc","Payment for order "+ order.getOrderId());
+    boolean LOAD_TEST_MODE = true; // flip to false to restore real M-Pesa calls
 
+    Map<String,Object> responseBody = new HashMap<>();
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization","Bearer "+accessToken);
-    headers.setContentType(MediaType.APPLICATION_JSON);
+    if (LOAD_TEST_MODE) {
+        String fakeCheckoutRequestId = "ws_CO_LOADTEST_" + System.nanoTime();
+        responseBody.put("CheckoutRequestID", fakeCheckoutRequestId);
+        responseBody.put("MerchantRequestID", "LOADTEST-" + UUID.randomUUID());
+        responseBody.put("ResponseCode", "0");
+        responseBody.put("ResponseDescription", "Success. Request accepted for processing (STUBBED)");
+        responseBody.put("CustomerMessage", "Success. Request accepted for processing (STUBBED)");
+        System.out.println("STK push stubbed for load test, order: " + order.getOrderId());
+    } else {
+        String accessToken = getAccessToken();
+        String timestamp = generateTimestamp();
+        String password = generatePassword(timestamp);
 
-    HttpEntity<Map<String,Object>> request = new HttpEntity<>(requestBody,headers);
+        Map<String,Object> requestBody = new HashMap<>();
+        requestBody.put("BusinessShortCode", shortCode);
+        requestBody.put("Password", password);
+        requestBody.put("Timestamp", timestamp);
+        requestBody.put("TransactionType", "CustomerPayBillOnline");
+        requestBody.put("Amount", order.getTotal().intValue());
+        requestBody.put("PartyA", order.getPhoneNumber());
+        requestBody.put("PartyB", shortCode);
+        requestBody.put("PhoneNumber", order.getPhoneNumber());
+        requestBody.put("CallBackURL", callbackUrl);
+        requestBody.put("AccountReference", "Order" + order.getOrderId());
+        requestBody.put("TransactionDesc", "Payment for order " + order.getOrderId());
 
-    RestTemplate restTemplate = new RestTemplate();
-    ResponseEntity<Map<String,Object>> response = restTemplate.exchange("https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest", HttpMethod.POST,request,new ParameterizedTypeReference <Map<String,Object>>() {});
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-    Map<String,Object> responseBody = response.getBody();
+        HttpEntity<Map<String,Object>> request = new HttpEntity<>(requestBody, headers);
 
-    String checkoutRequestId =(String) responseBody.get("CheckoutRequestID");
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Map<String,Object>> response = restTemplate.exchange(
+            "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+            HttpMethod.POST, request,
+            new ParameterizedTypeReference<Map<String,Object>>() {}
+        );
+
+        responseBody = response.getBody();
+    }
+
+    String checkoutRequestId = (String) responseBody.get("CheckoutRequestID");
     System.out.println(checkoutRequestId);
     order.setStatus("Initialized");
     orderRepo.save(order);
-     return responseBody;
+
+    return responseBody;
 }
 }
